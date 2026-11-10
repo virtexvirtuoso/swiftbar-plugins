@@ -156,7 +156,7 @@ def main():
             for f in (P.get("crons", {}).get("failing") or [])[:12]:
                 age_txt = f"{f['age_h']}h" if f.get("age_h") is not None else "never"
                 tag = "‼" if f.get("chronic") else " "
-                out(f"-- {tag} {f['errs']}x  {f['name'][:34]:<34} {f['agent'][:10]:<10} {age_txt}",
+                out(f"-- {tag} {f['errs']}x  {(f.get('name') or '?')[:34]:<34} {(f.get('agent') or 'cmd')[:10]:<10} {age_txt}",
                     size=11, font="Menlo", bash=ACTION, param1="cron",
                     param2=f["job_id"], terminal="true")
         else:
@@ -216,12 +216,12 @@ def main():
         nxt = ""
         if c.get("next_run_ms"):
             when = time.strftime("%H:%M", time.localtime(c["next_run_ms"] / 1000))
-            nxt = f" · next {when} {c.get('next_run_name', '')[:24]}"
+            nxt = f" · next {when} {(c.get('next_run_name') or '')[:24]}"
         out(f"Crons     {c.get('enabled', 0)} enabled · {c.get('ok_24h', 0)} ok / "
             f"{c.get('errors_24h', 0)} err (24h){nxt}", size=12)
         for u in (c.get("upcoming") or [])[:5]:
             when = time.strftime("%H:%M", time.localtime(u["at_ms"] / 1000))
-            out(f"-- {when}  {u['name'][:34]:<34} {u['agent'][:12]}", size=11, font="Menlo")
+            out(f"-- {when}  {(u.get('name') or '?')[:34]:<34} {(u.get('agent') or 'cmd')[:12]}", size=11, font="Menlo")
         # Standing failures live here too, not only under a problem line — a stale single
         # failure stops raising the badge but must never stop being visible.
         fl = c.get("failing") or []
@@ -238,7 +238,7 @@ def main():
             out(f"-- ── {label} ──", size=11, font="Menlo")
             for f in show[:12]:
                 age_txt = f"{f['age_h']}h" if f.get("age_h") is not None else "never"
-                out(f"-- {f['errs']}x  {f['name'][:34]:<34} {f['agent'][:10]:<10} {age_txt}",
+                out(f"-- {f['errs']}x  {(f.get('name') or '?')[:34]:<34} {(f.get('agent') or 'cmd')[:10]:<10} {age_txt}",
                     size=11, font="Menlo", bash=ACTION, param1="cron",
                     param2=f["job_id"], terminal="true")
         if c.get("clusters"):
